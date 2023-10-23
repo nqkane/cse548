@@ -291,10 +291,8 @@ $IPTABLES -A FORWARD -p icmp --icmp-type echo-reply -s 8.8.8.8 -i $Internet_IFAC
 # $IPTABLES -A INPUT -p icmp -j ACCEPT
 
 # [@Pham] To allow the client to access the web page (http) port 80 on the server by ip address of the gateway VM
-# [@Pham] to allow requests from the clients; where enp0s3 is the interface of the Gateway VM to the internal network and 10.0.2.5 is the Gateway VM ip address
+# [@Pham] to allow HTTP requests from the clients; where enp0s3 is the interface of the Gateway VM to the internal network and 10.0.2.5 is the Gateway VM ip address
 $IPTABLES -A INPUT -p TCP --dport 80 -i $Client_NET_IFACE -d $Gateway_VM_IP -j ACCEPT
-# [@Pham] to allow responses to the clients; where enp0s3 is the interface of the Gateway VM to the internal network and 10.0.2.5 is the Gateway VM ip address
-$IPTABLES -A OUTPUT -p TCP --sport 80 -o $Client_NET_IFACE -s $Gateway_VM_IP -j ACCEPT 
 
 # [@Pham] to stop the client from pinging the Gateway/Server VM’s IP address 
 $IPTABLES -A INPUT -p icmp -j DROP
@@ -314,6 +312,11 @@ $IPTABLES -A INPUT -i lo -j ACCEPT
 # example Allowed ping message back to client 
 
 # $IPTABLES -A OUTPUT -p icmp -j ACCEPT
+
+# [@Pham] To allow the client to access the web page (http) port 80 on the server by ip address of the gateway VM
+# [@Pham] to allow HTTP responses to the clients; where enp0s3 is the interface of the Gateway VM to the internal network and 10.0.2.5 is the Gateway VM ip address
+$IPTABLES -A OUTPUT -p TCP --sport 80 -o $Client_NET_IFACE -s $Gateway_VM_IP -j ACCEPT 
+
 # [@Pham] to verify the assessments #2, we need config Gateway VM to allow it to access to it own address for web service testing 
 # [@Pham] to allow output requests to the loopback interface
 $IPTABLES -A OUTPUT -o lo -j ACCEPT
